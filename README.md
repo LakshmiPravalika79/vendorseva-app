@@ -1,6 +1,6 @@
 # VendorSeva – A Hyperlocal Raw Material Marketplace
 
-[![Vercel](https://vercelbadge.vercel.app/api/your-username/vendorseva-app)](https://vendorseva-app.vercel.app)
+[![Vercel](https://vercelbadge.vercel.app/api/LakshmiPravalika79/vendorseva-app)](https://vendorseva-app.vercel.app)
 ![Made with Firebase](https://img.shields.io/badge/Firebase-Tools-yellow?logo=firebase)
 ![Powered by Gemini API](https://img.shields.io/badge/Google%20Gemini-API-blue?logo=google)
 ![Tech Stack](https://img.shields.io/badge/React-Vite-blue?logo=react)
