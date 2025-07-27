@@ -1,7 +1,7 @@
 // src/pages/MyOrdersPage.tsx
 
 import { useState, useEffect } from 'react';
-import { collection, query, where, onSnapshot, orderBy, addDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy, addDoc, QuerySnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -25,30 +25,28 @@ export default function MyOrdersPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [issueText, setIssueText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reportedOrderIds, setReportedOrderIds] = useState<Set<string>>(new Set());
 
-  // Fetch orders and handle loading state
   useEffect(() => {
     if (!user) return;
     setLoading(true);
     const q = query(collection(db, 'orders'), where('vendorId', '==', user.uid), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Order[]);
-      setLoading(false); // Set loading to false after data is fetched
+    const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot) => {
+      setOrders(snapshot.docs.map((doc: QueryDocumentSnapshot) => ({ id: doc.id, ...doc.data() })) as Order[]);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, [user]);
 
-  // Fetch existing reports (no change here)
   useEffect(() => {
     if (!user) return;
     const q = query(collection(db, "qualityReports"), where("vendorId", "==", user.uid));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-        const ids = new Set(snapshot.docs.map(doc => doc.data().orderId));
+    const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot) => {
+        const ids = new Set(snapshot.docs.map((doc: QueryDocumentSnapshot) => doc.data().orderId as string));
         setReportedOrderIds(ids);
     });
     return () => unsubscribe();
@@ -57,46 +55,35 @@ export default function MyOrdersPage() {
   const handleReportIssue = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!issueText || !selectedOrder || !user) return;
-
     setIsSubmitting(true);
     try {
-        // 1. Call our new Vercel Serverless Function
-        const apiResponse = await fetch('/api/categorize-issue', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ issueText: issueText }),
-        });
-
-        if (!apiResponse.ok) {
-            throw new Error('AI analysis failed');
-        }
-
-        const aiData = await apiResponse.json();
-
-        // 2. Save the REAL AI response to the database
-        await addDoc(collection(db, 'qualityReports'), {
-            orderId: selectedOrder.id,
-            vendorId: user.uid,
-            supplierId: selectedOrder.supplierId,
-            originalText: issueText,
-            category: aiData.category, // Real data from AI
-            summary: aiData.summary,    // Real data from AI
-            status: 'new',
-            timestamp: new Date(),
-        });
-
-        // 3. Show success message
-        toast({ title: "✅ Report Submitted", description: "Our AI has analyzed your feedback." });
-        setIssueText('');
-        setSelectedOrder(null);
-
+      const apiResponse = await fetch('/api/categorize-issue', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ issueText: issueText }),
+      });
+      if (!apiResponse.ok) { throw new Error('AI analysis failed'); }
+      const aiData = await apiResponse.json();
+      await addDoc(collection(db, 'qualityReports'), {
+        orderId: selectedOrder.id,
+        vendorId: user.uid,
+        supplierId: selectedOrder.supplierId,
+        originalText: issueText,
+        category: aiData.category,
+        summary: aiData.summary,
+        status: 'new',
+        timestamp: new Date(),
+      });
+      toast({ title: "✅ Report Submitted", description: "Our AI has analyzed your feedback." });
+      setIssueText('');
+      setSelectedOrder(null);
     } catch (error) {
-        console.error("Error submitting report: ", error);
-        toast({ title: "Error", description: "Could not submit report.", variant: "destructive" });
+      console.error("Error submitting report: ", error);
+      toast({ title: "Error", description: "Could not submit report.", variant: "destructive" });
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
-};
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -104,18 +91,13 @@ export default function MyOrdersPage() {
         <h1 className="text-3xl font-bold">My Orders</h1>
         <Link to="/dashboard" className="text-sm text-blue-600 hover:underline">← Back to Marketplace</Link>
       </div>
-
-      {/* NEW: Added loading state check */}
       {loading ? (
-        <div className="text-center py-20">
-            <p>Loading your orders...</p>
-        </div>
+        <div className="text-center py-20"><p>Loading your orders...</p></div>
       ) : (
         <div className="space-y-4">
           {orders.length > 0 ? (
             orders.map(order => (
               <Card key={order.id}>
-                {/* ... (Card content is the same) ... */}
                 <CardHeader>
                   <CardTitle>{order.productName}</CardTitle>
                   <CardDescription>Ordered on: {order.createdAt.toDate().toLocaleDateString()}</CardDescription>
@@ -143,7 +125,6 @@ export default function MyOrdersPage() {
               </Card>
             ))
           ) : (
-            // NEW: Improved empty state
             <div className="text-center py-20 bg-gray-50 rounded-lg">
               <h3 className="text-xl font-semibold">No Orders Yet</h3>
               <p className="text-muted-foreground mt-2">Go to the marketplace to place your first order.</p>

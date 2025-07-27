@@ -1,10 +1,14 @@
+// src/hooks/useAuth.ts
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, DocumentData } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 
-// Create a new type that includes our custom userType field
-export interface UserProfile extends User {
+// This new interface explicitly defines the properties we expect
+export interface UserProfile {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
   userType?: 'vendor' | 'supplier';
 }
 
@@ -13,20 +17,25 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (authUser: User | null) => {
       if (authUser) {
-        // If logged in, get the user document from Firestore
         const userDocRef = doc(db, 'users', authUser.uid);
         const userDoc = await getDoc(userDocRef);
-
-        // Combine auth data with firestore data (userType)
         if (userDoc.exists()) {
+          const userData = userDoc.data() as DocumentData;
           setUser({
-            ...authUser,
-            userType: userDoc.data()?.userType,
+            uid: authUser.uid,
+            email: authUser.email,
+            displayName: authUser.displayName,
+            userType: userData.userType,
           });
         } else {
-          setUser(authUser);
+          // Handle case where user exists in Auth but not Firestore (optional)
+          setUser({
+            uid: authUser.uid,
+            email: authUser.email,
+            displayName: authUser.displayName,
+          });
         }
       } else {
         setUser(null);
@@ -34,7 +43,6 @@ export function useAuth() {
       setLoading(false);
     });
 
-    // Cleanup listener on unmount
     return () => unsubscribe();
   }, []);
 
