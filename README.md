@@ -63,13 +63,13 @@ Street food vendors face several challenges in sourcing raw materials:
 ## 📸 Screenshots
 
 ### 👤 Vendor Dashboard
-<img src="" width="100%" alt="Vendor Dashboard" />
+<img width="958" height="455" alt="Image" src="https://github.com/user-attachments/assets/368e60c8-24ef-4858-967a-fb3e1ed0ce24" />
 
 ### 🛍️ Supplier Product Management
-<img src="https://i.imgur.com/supplier-dashboard.png" width="100%" alt="Supplier Dashboard" />
+<img width="958" height="454" alt="Image" src="https://github.com/user-attachments/assets/0838b2d6-3cf8-4897-8525-a2b3e4acc73c" />
 
 ### 🤖 AI-Powered Feedback Summary
-<img src="https://i.imgur.com/ai-feedback.png" width="100%" alt="AI Feedback System" />
+<img width="959" height="450" alt="Image" src="https://github.com/user-attachments/assets/e2f4aa97-02b8-4bb8-be93-c20451275b73" />
 
 > 📝 Replace these image links with your own screenshots uploaded to [Imgur](https://imgur.com/) or [ImgBB](https://imgbb.com/).
 
