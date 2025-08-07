@@ -32,6 +32,17 @@ Street food vendors face several challenges in sourcing raw materials:
 
 ---
 
+## 🎥 Video
+
+<a href="https://www.youtube.com/watch?v=tWkNCmTpqbM">
+  <img src="https://img.youtube.com/vi/tWkNCmTpqbM/0.jpg" width="100%" />
+</a>
+
+
+
+
+---
+
 ## ✨ Key Features
 
 ### 🔁 Dual User Roles
@@ -71,7 +82,6 @@ Street food vendors face several challenges in sourcing raw materials:
 ### 🤖 AI-Powered Feedback Summary
 <img width="959" height="450" alt="Image" src="https://github.com/user-attachments/assets/e2f4aa97-02b8-4bb8-be93-c20451275b73" />
 
-> 📝 Replace these image links with your own screenshots uploaded to [Imgur](https://imgur.com/) or [ImgBB](https://imgbb.com/).
 
 ---
 
