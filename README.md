@@ -35,7 +35,7 @@ Street food vendors face several challenges in sourcing raw materials:
 ## 🎥 Video
 
 <a href="https://www.youtube.com/watch?v=tWkNCmTpqbM">
-  <img src="https://img.youtube.com/vi/tWkNCmTpqbM/0.jpg" width="100%" />
+  <img src="src/assets/vendorseva-thumbnail.jpg" width="100%" />
 </a>
 
 
